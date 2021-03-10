@@ -1,0 +1,14 @@
+{ 
+  "postHour": 21,
+  "period": "2020.2",
+  "startDate": "20:00:00 02/22/2021",
+  "endDate": "20:00:00 05/29/2021",
+  "twitterConfig": {
+    "twitterName": "",
+    "consumer_key": "",
+    "consumer_secret": "",
+    "access_token": "",
+    "access_token_secret": ""
+  }
+}
+  
