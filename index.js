@@ -4,10 +4,11 @@ const config = require('./config.json')
 const getTime = require('./utils/getTime')
 
 function scheduleInterval (hours, callback) {
-  const now = new Date()
-  now.setDate(now.getDate() + 1)
-
-  nodeSchedule.scheduleJob(`${now.getMinutes()} ${hours} ${now.getDate()} ${now.getMonth() + 1} *`, callback)
+  const rule = new nodeSchedule.RecurrenceRule()
+  rule.hour = hours
+  rule.minute = 0
+  rule.second = 0
+  nodeSchedule.scheduleJob(rule, callback)
 }
 
 async function post () {
@@ -26,14 +27,7 @@ async function post () {
 
 function init () {
   const { postHour } = config
-  const today = new Date()
-  const actualHours = today.getHours()
-
-  if (actualHours <= postHour) {
-    nodeSchedule.scheduleJob(`${today.getMinutes()} ${postHour} ${today.getDate()} ${today.getMonth() + 1} *`, post)
-  } else {
-    scheduleInterval(postHour, post)
-  }
+  scheduleInterval(postHour, post)
 
   console.log(getTime(), 'Inicializado com sucesso!')
 }
