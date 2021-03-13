@@ -13,12 +13,11 @@ function scheduleInterval (hours, callback) {
 
 async function post () {
   try {
-    const { period, startDate, endDate, twitterConfig, postHour } = config
+    const { period, startDate, endDate, twitterConfig } = config
     const UERJCounter = new CounterBot(period, startDate, endDate, twitterConfig)
     const string = UERJCounter.makeString()
     await UERJCounter.postOnTwitter(string)
     console.log(getTime(), 'Postado com sucesso!')
-    scheduleInterval(postHour, post)
   } catch (err) {
     console.log(getTime(), 'Erro ao postar!')
     console.log(err)
