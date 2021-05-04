@@ -37,7 +37,7 @@ class CounterBot {
     const { phrase, emoji } = this.getEmoji(percentageToEnd)
 
     const string =
-    `Você cursou ${percentageToEnd}% de 2020.2!\n${phrase} ${daysToEndDate} dias para o fim do período. ${emoji}`
+    `Você cursou ${percentageToEnd}% de ${this.period}!\n${phrase} ${daysToEndDate} dias para o fim do período. ${emoji}`
     return string
   }
 
