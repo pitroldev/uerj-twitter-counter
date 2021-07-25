@@ -3,7 +3,7 @@ function diffDays (first, second) {
     const aDay = 24 * 60 * 60 * 1000
     const firstDate = new Date(first)
     const secondDate = new Date(second)
-    const diff = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())) / aDay)
+    const diff = Math.round(((secondDate.getTime() - firstDate.getTime())) / aDay)
 
     return diff
   } catch (err) {

@@ -36,13 +36,36 @@ class CounterBot {
     const { daysToEndDate, percentageToEnd } = this.getParsedDateDiff()
     const { phrase, emoji } = this.getEmoji(percentageToEnd)
 
-    const string =
-    `Você cursou ${percentageToEnd}% de ${this.period}!\n${phrase} ${daysToEndDate} dias para o fim do período. ${emoji}`
-    return string
+    if (percentageToEnd >= 0 && percentageToEnd < 100) {
+      const string =
+      `Você cursou ${percentageToEnd}% de ${this.period}!\n${phrase} ${daysToEndDate} dias para o fim do período. ${emoji}`
+      return string
+    }
+
+    if (percentageToEnd === 100) {
+      const finishString = `🚨🚨 URGENTE 🚨🚨\n📢 Você cursou 100% de ${this.period}!\nFinalmente acabou galera! 🥺🥺🥺`
+      return finishString
+    }
+
+    // RFN Extra
+
+    // const rfnDays = -daysToEndDate + 11
+    // if (daysToEndDate > 0 && rfnDays > 0) {
+    //   const rnfString = `Você cursou ${percentageToEnd}% de ${this.period}! 🤪\nFaltam ${rfnDays} dias para o possível fim do período. 🤠`
+    //   return rnfString
+    // }
+    // if (rfnDays === 0) {
+    //   const rnfString = `E finalmente, após cursar ${percentageToEnd}% de ${this.period}, o período oficialmente acaba! 🎉🎉🎉`
+    //   return rnfString
+    // }
   }
 
   async postOnTwitter (status) {
     const { twitterApi } = this
+    if (process.env.NODE_ENV) {
+      console.log('postOnTwitter', status)
+      return
+    }
     return await twitterApi.post('statuses/update', { status })
   }
 }

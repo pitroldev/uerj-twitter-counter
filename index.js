@@ -16,8 +16,12 @@ async function post () {
     const { period, startDate, endDate, twitterConfig } = config
     const UERJCounter = new CounterBot(period, startDate, endDate, twitterConfig)
     const string = UERJCounter.makeString()
-    await UERJCounter.postOnTwitter(string)
-    console.log(getTime(), 'Postado com sucesso!')
+    if (string) {
+      await UERJCounter.postOnTwitter(string)
+      console.log(getTime(), 'Postado com sucesso!')
+    } else {
+      console.log(getTime(), 'Nada para postar no momento...')
+    }
   } catch (err) {
     console.log(getTime(), 'Erro ao postar!')
     console.log(err)
@@ -25,6 +29,10 @@ async function post () {
 }
 
 function init () {
+  if (process.env.NODE_ENV) {
+    return post()
+  }
+
   const { postHour } = config
   scheduleInterval(postHour, post)
 
