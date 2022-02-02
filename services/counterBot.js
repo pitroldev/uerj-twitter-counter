@@ -25,10 +25,14 @@ class CounterBot {
   getParsedDateDiff () {
     const today = new Date()
     const { endDate, startDate } = this
+    startDate.setDate(startDate.getDate() - 1)
+
     const daysFromStartDate = diffDays(startDate, today)
     const daysToEndDate = diffDays(today, endDate)
     const totalDays = diffDays(startDate, endDate)
     const percentageToEnd = parseFloat(parseFloat((daysFromStartDate / totalDays) * 100).toFixed(2))
+
+    if (process.env.NODE_ENV) console.log({ today, startDate, endDate, totalDays, daysToEndDate, daysFromStartDate, percentageToEnd })
     return { totalDays, daysToEndDate, daysFromStartDate, percentageToEnd }
   }
 
