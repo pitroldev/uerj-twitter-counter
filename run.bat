@@ -1,3 +1,3 @@
 @ECHO OFF
 
-node ./index.js
+node ./dist/src/index.js
