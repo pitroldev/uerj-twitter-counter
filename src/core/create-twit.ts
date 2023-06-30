@@ -19,7 +19,7 @@ export function createTwitt() {
   if (daysFromEnd < 0) throw new Error('COUNTDOWN_HAS_ENDED')
 
   const remainingDays = daysFromEnd + 1
-  const percentage = Math.round((daysFromStart / totalDays) * 100)
+  const percentage = Math.round((daysFromStart / totalDays) * 10000) / 100
   const parsedPercentage = percentage > 100 ? 100 : percentage.toFixed(2)
 
   const phrase = PHRASES.find((phrase) => {
