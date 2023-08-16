@@ -16,7 +16,7 @@ export function createTwitt() {
   const daysFromEnd = endDate.diff(today, 'days') + 1
 
   if (daysFromStart <= 0) throw new Error('COUNTDOWN_HAS_NOT_STARTED')
-  if (daysFromEnd < 0) throw new Error('COUNTDOWN_HAS_ENDED')
+  if (daysFromEnd <= 0) throw new Error('COUNTDOWN_HAS_ENDED')
 
   const remainingDays = daysFromEnd 
   const percentage = Math.round((daysFromStart / totalDays) * 10000) / 100
