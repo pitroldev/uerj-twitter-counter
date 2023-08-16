@@ -11,14 +11,14 @@ export function createTwitt() {
   const startDate = moment(START_DATE)
   const endDate = moment(END_DATE)
 
-  const totalDays = endDate.diff(startDate, 'days')
-  const daysFromStart = today.diff(startDate, 'days')
-  const daysFromEnd = endDate.diff(today, 'days')
+  const totalDays = endDate.diff(startDate, 'days') + 1
+  const daysFromStart = today.diff(startDate, 'days') + 1
+  const daysFromEnd = endDate.diff(today, 'days') + 1
 
-  if (daysFromStart < 0) throw new Error('COUNTDOWN_HAS_NOT_STARTED')
+  if (daysFromStart <= 0) throw new Error('COUNTDOWN_HAS_NOT_STARTED')
   if (daysFromEnd < 0) throw new Error('COUNTDOWN_HAS_ENDED')
 
-  const remainingDays = daysFromEnd + 1
+  const remainingDays = daysFromEnd 
   const percentage = Math.round((daysFromStart / totalDays) * 10000) / 100
   const parsedPercentage = percentage > 100 ? 100 : percentage.toFixed(2)
 
