@@ -1,3 +1,4 @@
 @ECHO OFF
 
-node ./dist/src/index.js
+cd /d "%~dp0"
+node ./dist/index.js

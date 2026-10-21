@@ -1,5 +1,6 @@
 node_modules
 config.json
-yarn.lock
 .env
 dist
+artifacts/
+*.log
