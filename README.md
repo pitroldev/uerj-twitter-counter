@@ -20,6 +20,9 @@ A prioridade diária é: início/fim do semestre, recesso/retorno, datas especia
 
 ```sh
 yarn install --frozen-lockfile
+python -m venv .venv
+# Linux: .venv/bin/python. Windows: .venv/Scripts/python.exe.
+.venv/bin/python -m pip install -r requirements-twifork.txt
 npm run check
 npm run preview -- --from 2026-10-21 --to 2026-12-25
 npm run preview -- --from 2026-10-21 --to 2026-12-25 --out docs/previa-contador.md
@@ -45,13 +48,33 @@ Use `example.env` como referência e mantenha os segredos somente em `.env`.
 
 `NODE_ENV=development` e `NODE_ENV=test` também executam somente a prévia. `NODE_ENV=production` mantém o agendamento ativo. `npm start` inicia o agendamento de publicação após `npm run build`; não faz uma publicação imediata ao iniciar.
 
-O adaptador utiliza as credenciais de usuário existentes e envia `poll.options` e `poll.duration_minutes` quando houver enquete, conforme a [documentação oficial de criação de posts](https://docs.x.com/x-api/posts/manage-tweets/introduction). Uma falha de permissão da API é reportada como erro; não é tratada como sucesso nem convertida silenciosamente em outro post. A publicação real das novas enquetes ainda precisa ser validada com o acesso da conta ao X.
+## Publicação com twifork
+
+O publicador padrão é o [twifork](https://github.com/PawiX25/twifork), fixado em **2.4.0**, com Python 3.10 ou superior. Ele usa a sessão da conta para acessar a API interna do site, sem usar créditos da API oficial. As dependências Python ficam isoladas em `.venv`; as versões estão em `requirements-twifork.txt`.
+
+No `.env`, configure `X_AUTH_TOKEN` e `X_CT0` com os cookies `auth_token` e `ct0` da sua própria sessão do X. `X_EXPECTED_USERNAME` define a conta permitida e vale `contadoruerj` por padrão. O processo confirma essa identidade antes de qualquer escrita. Não envie cookies no chat, nos logs ou no Git. Esses cookies permitem acesso à conta e precisam ser renovados quando a sessão expirar.
+
+```sh
+npm run check:session             # somente leitura: confirma a conta
+npm run check:session -- ID_POST  # somente leitura: lê um post e confirma a autoria
+```
+
+`TWIFORK_PYTHON` pode apontar para um ambiente Python fora do repositório. `TWIFORK_JOURNAL_PATH` pode mudar o local do diário, cujo padrão é `var/twifork.sqlite`. Preserve esse arquivo em deploys e reinícios. O processo usa um cliente novo a cada execução, tem tempo limite e não repete automaticamente uma tentativa que já iniciou a escrita. Uma enquete cria primeiro o cartão com as alternativas e duração, depois publica o tweet com esse cartão; falha na enquete não vira um tweet sem enquete.
+
+Depois de renovar os cookies no `.env`, reinicie o processo do contador para carregar a nova sessão. O comando `check:session` lê o arquivo novamente a cada execução.
+
+O diário reserva uma única tentativa por conta/data, inclusive entre processos concorrentes. Uma tentativa ambígua fica `pending`: confira a conta no X antes de qualquer intervenção manual. O comando `check:session -- ID_POST` ajuda a confirmar um post conhecido; ele não altera o diário. Um ID válido retornado pela publicação registra `published`. Falhas de autenticação antes da escrita não reservam o dia.
+
+`X_PUBLISHER=official` seleciona explicitamente o SDK oficial e suas quatro credenciais antigas. **Não existe troca automática para a API paga** quando o twifork falha. O diário de tentativas é específico do publicador twifork. Não execute publicadores diferentes para a mesma data. Prévia e inicialização do agendador não publicam nem verificam a sessão.
+
+O twifork não é uma API oficial: alterações do X, sessão vencida e bloqueios da conta podem interromper a publicação. Os testes automatizados verificam os contratos e falhas localmente; a validação real deve confirmar o post e sua enquete na conta.
 
 ## Estrutura
 
 - `src/core`: calendário e escolha determinística de conteúdo, sem chamadas de rede.
 - `src/config`: calendário oficial, opções e textos.
 - `src/application`: execução de prévia/publicação usando a porta `PostPublisher`.
-- `src/services`: tradução do post e envio pelo SDK do X.
+- `src/services`: publicadores twifork e SDK oficial, selecionados explicitamente.
+- `scripts/twifork_bridge.py`: integração Python e diário persistente de tentativas.
 - `src/preview.ts`: geração de prévias em Markdown, JSON e atualização do HTML.
 - `tests`: calendário completo, alternância, limites, fuso, enquetes e isolamento da prévia.

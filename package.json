@@ -16,7 +16,8 @@
     "build": "node scripts/clean.cjs && tsc",
     "lint": "eslint src --ext .ts",
     "check": "npm run lint && npm test",
-    "test": "npm run build && node --test tests/*.test.cjs",
+    "test": "npm run build && node --test tests/*.test.cjs && node scripts/test-python.cjs",
+    "check:session": "npm run build && node dist/check-session.js",
     "preview": "npm run build && node dist/preview.js",
     "dev": "ts-node-dev --respawn --transpile-only src/dev.ts"
   },

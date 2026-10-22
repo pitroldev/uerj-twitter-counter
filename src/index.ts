@@ -4,8 +4,7 @@ import nodeSchedule from 'node-schedule'
 import { configuredCounter } from './config/counter'
 import { localDate } from './core/calendar'
 import { runCountdown } from './application/run-countdown'
-import { createTwitterPublisher } from './services/twitter-publisher'
-import { type CountdownPost } from './core/countdown'
+import { configuredPublisher } from './services/configured-publisher'
 dotenv.config()
 
 const generate = configuredCounter()
@@ -20,16 +19,7 @@ const log = (...values: unknown[]): void => {
 
 async function post(): Promise<void> {
   try {
-    const publisher = dryRun
-      ? undefined
-      : {
-          publish: async (draft: CountdownPost) =>
-            await createTwitterPublisher(
-              (
-                await import('./services/twitter-api')
-              ).default
-            ).publish(draft)
-        }
+    const publisher = dryRun ? undefined : configuredPublisher()
     const result = await runCountdown({
       date: localDate(new Date()),
       generate,

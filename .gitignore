@@ -4,3 +4,8 @@ config.json
 dist
 artifacts/
 *.log
+.venv/
+var/
+__pycache__/
+*.pyc
+cookies*.json
