@@ -69,6 +69,18 @@ O diário reserva uma única tentativa por conta/data, inclusive entre processos
 
 O twifork não é uma API oficial: alterações do X, sessão vencida e bloqueios da conta podem interromper a publicação. Os testes automatizados verificam os contratos e falhas localmente; a validação real deve confirmar o post e sua enquete na conta.
 
+## Alertas pelo Homelab
+
+Em produção, o processo atualiza `var/health.json` a cada minuto e registra início, sucesso, erro sanitizado ou encerramento do calendário. O caminho pode ser alterado por `PUBLICATION_HEALTH_PATH`. Preserve esse arquivo e `var/twifork.sqlite` nos deploys; reiniciar não apaga a última execução. Prévia e testes usam caminhos isolados e não alimentam o monitor de produção.
+
+O serviço `contador-monitor` no Homelab consulta esse estado por SSH a cada minuto, independentemente do processo e do servidor do contador. Uma chave exclusiva aceita somente a leitura do arquivo, sem shell livre, PTY ou encaminhamento de portas. Cookies do X permanecem no servidor do contador; o token do Home Assistant permanece no Homelab.
+
+O monitor avisa no painel do Home Assistant e no **2º Echo Dot de Petro** em caso de erro, post sem confirmação dez minutos após o horário, três consultas consecutivas sem resposta, cinco minutos sem heartbeat ou calendário encerrado. O padrão continua 19h, com alerta por ausência a partir de 19h10, em São Paulo. A instalação não acusa como perdido um post anterior à ativação do monitor.
+
+Alertas são deduplicados por incidente e persistem após reiniciar o monitor. A voz respeita Não perturbe e o horário configurado no HA, atualmente 07h–22h; se o Echo estiver offline, somente um problema ainda ativo será anunciado quando ele voltar. O monitor não tenta publicar nem chama o X. Sucesso significa ID confirmado pelo publicador; remoção posterior do tweet não é detectada.
+
+Painel na LAN: [Contador UERJ](http://homelab.local:8123/contador-uerj/status). Código e operação ficam no repositório Homelab, em `termux/apps/contador-monitor/` e `docs/home-assistant-contador-uerj.md`. Se o Homelab ou o Home Assistant estiverem desligados, não há entrega de alertas durante essa indisponibilidade.
+
 ## Estrutura
 
 - `src/core`: calendário e escolha determinística de conteúdo, sem chamadas de rede.

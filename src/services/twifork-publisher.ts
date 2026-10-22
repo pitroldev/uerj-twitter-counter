@@ -12,7 +12,7 @@ export interface TwiforkResponse {
 }
 
 const ROOT = resolvePath(__dirname, '../..')
-const ERROR_CODES = new Set([
+export const ERROR_CODES = new Set([
   'INVALID_REQUEST',
   'INVALID_POST',
   'INVALID_POST_ID',

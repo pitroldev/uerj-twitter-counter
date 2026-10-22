@@ -20,7 +20,11 @@ const { toTwitterPayload } = require('../dist/services/post-payload')
 
 const generate = createCounter(ACADEMIC_CALENDAR)
 
-test('produção agenda em UTC sem publicar imediatamente nem carregar o cliente', () => {
+test('produção agenda em UTC sem publicar imediatamente nem carregar o cliente', (t) => {
+  const { mkdtempSync, rmSync } = require('node:fs')
+  const { join } = require('node:path')
+  const dir = mkdtempSync(join(require('node:os').tmpdir(), 'counter-start-'))
+  t.after(() => rmSync(dir, { recursive: true, force: true }))
   const script = `
     const assert = require('node:assert/strict');
     const Module = require('node:module');
@@ -51,6 +55,7 @@ test('produção agenda em UTC sem publicar imediatamente nem carregar o cliente
       ...process.env,
       NODE_ENV: 'production',
       DRY_RUN: 'false',
+      PUBLICATION_HEALTH_PATH: join(dir, 'health.json'),
       UTC_HOUR_TO_POST: '22'
     }
   })
